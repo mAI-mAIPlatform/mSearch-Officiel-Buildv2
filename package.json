@@ -1,0 +1,27 @@
+{
+  "name": "mSearch",
+  "version": "1.0.0",
+  "description": "mSearch Browser",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.0.0"
+  },
+  "dependencies": {
+    "unzipper": "^0.10.11"
+  },
+  "build": {
+    "appId": "com.msearch.browser",
+    "productName": "mSearch",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis"
+    }
+  }
+}
