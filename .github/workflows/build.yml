@@ -3,28 +3,38 @@ name: Build mSearch
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:  # Permet de lancer manuellement
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v4
+      # 1️⃣ Checkout du repo avec token
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_TOKEN }}  # Ton Personal Access Token
 
-      - name: Setup Node
+      # 2️⃣ Setup Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
+      # 3️⃣ Installer les dépendances
       - name: Install dependencies
         run: npm install
 
+      # 4️⃣ Télécharger Chromium automatiquement
       - name: Download Chromium
         run: node chromium/fetch.js
 
-      - name: Build app
+      # 5️⃣ Build Electron App
+      - name: Build App
         run: npm run build
 
+      # 6️⃣ Upload l’artifact mSearch
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
