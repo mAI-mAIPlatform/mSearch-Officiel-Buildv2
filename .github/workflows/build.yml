@@ -3,51 +3,45 @@ name: Build mSearch
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:  # Permet de lancer manuellement
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: windows-latest
 
     env:
-      GH_TOKEN: ${{ secrets.GH_TOKEN }}  # Test token global pour ce job
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
     steps:
-      # 1️⃣ Test du token avant de lancer quoi que ce soit
       - name: Test GH_TOKEN
+        shell: pwsh
         run: |
-          if [ -z "$GH_TOKEN" ]; then
-            echo "❌ GH_TOKEN is not set!"
+          if (-not $env:GH_TOKEN) {
+            Write-Error "❌ GH_TOKEN is not set!"
             exit 1
-          else
-            echo "✅ GH_TOKEN is set, length: ${#GH_TOKEN}"
-          fi
+          } else {
+            Write-Host "✅ GH_TOKEN is set, length: $($env:GH_TOKEN.Length)"
+          }
 
-      # 2️⃣ Checkout du repo avec token
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_TOKEN }}
 
-      # 3️⃣ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      # 4️⃣ Installer les dépendances
       - name: Install dependencies
         run: npm install
 
-      # 5️⃣ Télécharger Chromium automatiquement
       - name: Download Chromium
         run: node chromium/fetch.js
 
-      # 6️⃣ Build Electron App
       - name: Build App
         run: npm run build
 
-      # 7️⃣ Upload l’artifact mSearch
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
